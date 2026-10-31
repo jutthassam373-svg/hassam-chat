@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#075e54">
@@ -346,6 +348,19 @@ if(localStorage.getItem("hassam_dark")==="yes"){
 }
 
 renderChats();
+</script>
+ <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(function () {
+        console.log("HASSAM CHAT Offline Ready!");
+      })
+      .catch(function (error) {
+        console.log("Offline Error:", error);
+      });
+  });
+}
 </script>
 </body>
 </html>
