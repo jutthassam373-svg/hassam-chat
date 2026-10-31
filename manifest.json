@@ -1,0 +1,19 @@
+{
+  "name": "HASSAM CHAT",
+  "short_name": "HASSAM CHAT",
+  "description": "Your Private Chat Space",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#075e54",
+  "theme_color": "#075e54",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
