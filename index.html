@@ -1,391 +1,682 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#075e54">
+<link rel="manifest" href="manifest.json">
 <title>HASSAM CHAT</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
- font-family:Arial,sans-serif;
- background:#dce5e1;
- height:100vh;
- overflow:hidden;
-}
-.app{
- display:flex;
- height:100vh;
- max-width:1500px;
- margin:auto;
- background:white;
- box-shadow:0 0 25px #0002;
-}
-.sidebar{
- width:370px;
- min-width:300px;
- background:#fff;
- border-right:1px solid #ddd;
- display:flex;
- flex-direction:column;
-}
-.header{
- height:65px;
- background:#075e54;
- color:white;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 18px;
-}
-.logo{font-size:21px;font-weight:bold;letter-spacing:1px}
-.header button{
- background:none;border:0;color:white;
- font-size:21px;cursor:pointer;margin-left:13px;
-}
+body{font-family:Arial,sans-serif;background:#dce5e1;height:100vh;overflow:hidden;color:#17212b}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{display:flex;height:100vh;max-width:1500px;margin:auto;background:#fff;box-shadow:0 0 25px #0002}
+.sidebar{width:370px;min-width:300px;background:#fff;border-right:1px solid #ddd;display:flex;flex-direction:column}
+.header{min-height:65px;background:#075e54;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:10px}
+.logo{font-size:20px;font-weight:bold;letter-spacing:1px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.header button{background:none;border:0;color:white;font-size:18px}
+.me{padding:12px;background:#e9f5f1;border-bottom:1px solid #ddd;font-size:13px;line-height:1.7}
+.me strong{color:#075e54}
 .search{padding:12px;background:#f5f6f6}
-.search input{
- width:100%;padding:12px 15px;border:0;
- outline:0;border-radius:9px;background:white;
-}
+.search input,.auth-card input,.modal input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;outline:none}
 .chat-list{overflow-y:auto;flex:1}
-.chat-item{
- display:flex;align-items:center;gap:12px;
- padding:14px 13px;border-bottom:1px solid #eee;
- cursor:pointer;transition:.2s;
-}
+.chat-item{display:flex;align-items:center;gap:12px;padding:14px 13px;border-bottom:1px solid #eee;cursor:pointer}
 .chat-item:hover,.chat-item.active{background:#e9f5f1}
-.avatar{
- width:48px;height:48px;border-radius:50%;
- background:#128c7e;color:white;
- display:grid;place-items:center;
- font-size:19px;font-weight:bold;flex-shrink:0;
-}
+.avatar{width:46px;height:46px;border-radius:50%;background:#128c7e;color:white;display:grid;place-items:center;font-size:19px;font-weight:bold;flex-shrink:0}
 .chat-info{flex:1;min-width:0}
-.chat-info h3{font-size:15px;margin-bottom:6px}
+.chat-info h3{font-size:15px;margin-bottom:5px}
 .chat-info p{font-size:12px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-time{font-size:10px;color:#888}
-.main{
- flex:1;display:flex;flex-direction:column;
- min-width:0;background:#efeae2;
-}
-.welcome{
- flex:1;display:flex;flex-direction:column;
- justify-content:center;align-items:center;
- text-align:center;color:#54656f;padding:20px;
-}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#efeae2}
+.welcome{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#54656f;padding:20px}
 .welcome .big{font-size:75px;margin-bottom:20px}
 .welcome h1{font-size:30px;font-weight:400;margin-bottom:12px}
-.welcome p{line-height:1.6;font-size:14px}
-.chat-header{
- height:65px;background:#f0f2f5;
- display:flex;align-items:center;padding:0 18px;gap:12px;
- border-bottom:1px solid #ddd;
-}
+.welcome p{line-height:1.7;font-size:14px}
+.chat-header{height:65px;background:#f0f2f5;display:flex;align-items:center;padding:0 18px;gap:12px;border-bottom:1px solid #ddd}
 .chat-header h3{font-size:16px}
 .chat-header small{color:#128c7e}
-.messages{
- flex:1;overflow-y:auto;padding:22px;
- display:flex;flex-direction:column;gap:12px;
- background-color:#efeae2;
- background-image:radial-gradient(#b7aaa0 0.5px,transparent 0.5px);
- background-size:18px 18px;
-}
-.msg{
- max-width:75%;padding:10px 12px;border-radius:9px;
- font-size:14px;line-height:1.5;word-wrap:break-word;
- box-shadow:0 1px 2px #0001;
-}
+.back{display:none;border:0;background:none;font-size:30px;color:#075e54}
+.messages{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px;background-color:#efeae2;background-image:radial-gradient(#b7aaa0 .5px,transparent .5px);background-size:18px 18px}
+.msg{max-width:75%;padding:10px 12px;border-radius:9px;font-size:14px;line-height:1.5;overflow-wrap:anywhere;box-shadow:0 1px 2px #0001}
 .sent{align-self:flex-end;background:#d9fdd3}
 .received{align-self:flex-start;background:white}
 .msg time{display:block;text-align:right;font-size:10px;color:#777;margin-top:4px}
-.input-area{
- display:flex;gap:10px;padding:12px;
- background:#f0f2f5;align-items:center;
-}
-.input-area input{
- flex:1;padding:14px;border:0;border-radius:25px;
- outline:none;font-size:14px;min-width:0;
-}
-.send{
- background:#128c7e;color:white;border:0;
- width:45px;height:45px;border-radius:50%;
- font-size:20px;cursor:pointer;
-}
-.add{
- background:#128c7e;color:white;border:0;
- padding:10px 14px;border-radius:8px;
- cursor:pointer;font-weight:bold;
-}
-.empty{padding:30px;text-align:center;color:#888}
-.modal-bg{
- position:fixed;inset:0;background:#0008;
- display:none;align-items:center;justify-content:center;
- z-index:10;padding:20px;
-}
-.modal{
- background:white;padding:25px;border-radius:15px;
- width:100%;max-width:350px;
-}
-.modal h2{margin-bottom:18px}
-.modal input{
- width:100%;padding:12px;margin-bottom:12px;
- border:1px solid #ddd;border-radius:7px;
-}
-.modal button{margin-right:6px}
+.input-area{display:flex;gap:10px;padding:12px;background:#f0f2f5;align-items:center}
+.input-area input{flex:1;padding:14px;border:0;border-radius:25px;outline:none;font-size:14px;min-width:0}
+.send,.primary{background:#128c7e;color:white;border:0;border-radius:25px;padding:12px 18px;font-weight:bold}
+.send{width:45px;height:45px;padding:0;border-radius:50%;font-size:20px}
+.empty{padding:25px;text-align:center;color:#888;font-size:14px;line-height:1.6}
+.modal-bg{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:10;padding:20px}
+.modal{background:white;padding:24px;border-radius:15px;width:100%;max-width:380px;box-shadow:0 12px 40px #0003}
+.modal h2{margin-bottom:15px}
+.modal input{margin:7px 0}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+.secondary{background:#777;color:white;border:0;border-radius:8px;padding:11px 14px}
+.hint{font-size:12px;color:#666;line-height:1.5;margin:8px 0}
+.auth-wrap{position:fixed;inset:0;background:linear-gradient(135deg,#064e46,#128c7e);display:flex;align-items:center;justify-content:center;padding:18px;z-index:20;overflow:auto}
+.auth-card{background:white;width:100%;max-width:410px;padding:28px;border-radius:18px;box-shadow:0 15px 45px #0004}
+.auth-card h1{text-align:center;color:#075e54;margin-bottom:8px}
+.auth-card .sub{text-align:center;color:#667;margin-bottom:20px;font-size:14px}
+.auth-card input{margin:7px 0}
+.auth-card .primary{width:100%;margin-top:10px;border-radius:8px}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px}
+.auth-switch button{border:0;background:none;color:#075e54;font-weight:bold}
+.status{min-height:20px;margin-top:10px;font-size:13px;line-height:1.5;color:#9b2c2c}
+.status.ok{color:#087443}
+.logout{border:0;background:#fff;color:#075e54;padding:7px 10px;border-radius:7px;font-weight:bold}
 .dark{background:#111;color:#eee}
-.dark .sidebar,.dark .modal{background:#202c33;color:white}
+.dark .sidebar,.dark .modal,.dark .auth-card{background:#202c33;color:white}
 .dark .chat-item{border-color:#39454d}
 .dark .chat-item:hover,.dark .chat-item.active{background:#35444d}
-.dark .chat-header,.dark .input-area,.dark .search{background:#202c33}
-.dark .search input,.dark .input-area input{background:#35444d;color:white}
+.dark .chat-header,.dark .input-area,.dark .search,.dark .me{background:#202c33;color:#eee}
+.dark .search input,.dark .input-area input,.dark .modal input,.dark .auth-card input{background:#35444d;color:white;border-color:#53616a}
 .dark .messages{background:#0b141a;background-image:none}
 .dark .received{background:#202c33;color:white}
 .dark .welcome{color:#ddd}
+.dark .hint,.dark .auth-card .sub{color:#bbb}
 @media(max-width:650px){
- .sidebar{width:100%;min-width:0}
- .main{display:none}
- .app.open-chat .sidebar{display:none}
- .app.open-chat .main{display:flex;width:100%}
- .chat-header:before{
-  content:"‹";font-size:32px;color:#075e54;
-  cursor:pointer;margin-right:5px;
- }
- .msg{max-width:88%}
+.sidebar{width:100%;min-width:0}
+.main{display:none}
+.app.open-chat .sidebar{display:none}
+.app.open-chat .main{display:flex;width:100%}
+.back{display:block}
+.msg{max-width:88%}
 }
 </style>
 </head>
 
 <body>
+
 <div class="app" id="app">
 
 <aside class="sidebar">
- <div class="header">
-  <div class="logo">💬 HASSAM CHAT</div>
-  <div>
-   <button onclick="newChat()" title="Add contact">＋</button>
-   <button onclick="toggleDark()" title="Dark mode">☾</button>
-   <button id="installBtn" style="display:none" title="Install App">⬇</button>
-  </div>
- </div>
+<div class="header">
+<div class="logo">💬 HASSAM CHAT</div>
+<div class="header-actions">
+<button id="addFriendBtn">＋</button>
+<button id="darkBtn">☾</button>
+<button id="installBtn" class="logout" style="display:none">Install</button>
+<button id="logoutBtn" class="logout">Log out</button>
+</div>
+</div>
 
- <div class="search">
-  <input id="search" placeholder="🔍 Search chats..." oninput="renderChats()">
- </div>
+<div class="me" id="myProfile">Loading profile...</div>
 
- <div class="chat-list" id="chatList"></div>
+<div class="search">
+<input id="search" placeholder="🔍 Search chats..." autocomplete="off">
+</div>
+
+<div class="chat-list" id="chatList">
+<div class="empty">Loading chats...</div>
+</div>
 </aside>
 
-<main class="main" id="main">
- <div class="welcome" id="welcome">
-  <div class="big">💬</div>
-  <h1>HASSAM CHAT</h1>
-  <p>Your Private Chat Space<br><br>
-  Select a contact to start chatting.<br>
-  Your messages are saved on this device.</p>
- </div>
+<main class="main">
 
- <div id="chatScreen" style="display:none;flex:1;flex-direction:column;min-height:0">
-  <div class="chat-header">
-   <div class="avatar" id="chatAvatar">H</div>
-   <div>
-    <h3 id="chatName">Contact</h3>
-    <small>Offline chat</small>
-   </div>
-  </div>
+<div class="welcome" id="welcome">
+<div class="big">💬</div>
+<h1>HASSAM CHAT</h1>
+<p>Your private chat space<br><br>
+Find a friend using their HASSAM ID.<br>
+Choose a contact to start chatting.</p>
+</div>
 
-  <div class="messages" id="messages"></div>
+<section id="chatScreen" style="display:none;flex:1;flex-direction:column;min-height:0">
 
-  <form class="input-area" onsubmit="sendMessage(event)">
-   <input id="messageInput" placeholder="Type a message..." autocomplete="off">
-   <button class="send" type="submit">➤</button>
-  </form>
- </div>
+<div class="chat-header">
+<button class="back" id="backBtn">‹</button>
+<div class="avatar" id="chatAvatar">H</div>
+<div style="flex:1;min-width:0">
+<h3 id="chatName">Contact</h3>
+<small id="chatId">HASSAM ID</small>
+</div>
+<button id="downloadChatBtn" class="secondary" style="padding:9px 10px">⬇ Save chat</button>
+</div>
+
+<div class="messages" id="messages"></div>
+
+<form class="input-area" id="messageForm">
+<input id="messageInput" placeholder="Type a message..." autocomplete="off" maxlength="2000">
+<button class="send" type="submit">➤</button>
+</form>
+
+</section>
 </main>
 </div>
 
-<div class="modal-bg" id="modal">
- <div class="modal">
-  <h2>New Contact</h2>
-  <input id="contactName" placeholder="Enter contact name">
-  <button class="add" onclick="createContact()">Create</button>
-  <button class="add" style="background:#777" onclick="closeModal()">Cancel</button>
- </div>
+<div class="auth-wrap" id="authWrap">
+<div class="auth-card">
+<h1>💬 HASSAM CHAT</h1>
+<p class="sub">Create your account or log in</p>
+
+<form id="authForm">
+<input id="displayName" placeholder="Your name (for sign up)" maxlength="40">
+<input id="email" type="email" placeholder="Email address" required>
+<input id="password" type="password" placeholder="Password (at least 8 characters)" minlength="8" required>
+<button class="primary" id="authSubmit" type="submit">Create account</button>
+</form>
+
+<div class="auth-switch">
+<span id="switchText">Already have an account?</span>
+<button id="switchMode" type="button">Log in</button>
 </div>
 
-<script>
-let contacts = JSON.parse(localStorage.getItem("hassam_contacts") || "[]");
-let current = null;
+<div class="status" id="authStatus"></div>
+<p class="hint">Use an email you can access. If email confirmation is enabled, verify your email before logging in. Never share your password.</p>
+</div>
+</div>
 
-function save(){
- localStorage.setItem("hassam_contacts",JSON.stringify(contacts));
+<div class="modal-bg" id="friendModal">
+<div class="modal">
+<h2>Find a friend</h2>
+<p class="hint">Enter your friend's exact HASSAM ID.</p>
+<input id="friendIdInput" placeholder="HJ-XXXXXXXX">
+<div class="modal-actions">
+<button class="primary" id="findFriendBtn">Find user</button>
+<button class="secondary" id="closeFriendBtn">Cancel</button>
+</div>
+<div class="status" id="friendStatus"></div>
+</div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL = "https://yggxqcinxphommhscoyt.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_QrZdIxrSJEW72nmiBkwNuQ_55iBU0yD";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const $ = id => document.getElementById(id);
+
+let user = null;
+let myProfile = null;
+let currentFriend = null;
+let realtimeChannel = null;
+
+let contacts = JSON.parse(localStorage.getItem("hassam_cloud_contacts") || "[]");
+let signupMode = true;
+
+function setStatus(id, message, ok=false) {
+const el = $(id);
+el.textContent = message;
+el.className = "status" + (ok ? " ok" : "");
 }
 
-function renderChats(){
- const list=document.getElementById("chatList");
- const query=document.getElementById("search").value.toLowerCase();
- list.innerHTML="";
-
- const filtered=contacts.filter(c=>c.name.toLowerCase().includes(query));
-
- if(filtered.length===0){
-  list.innerHTML='<div class="empty">No chats yet.<br>Press + to add a contact.</div>';
-  return;
- }
-
- filtered.forEach(c=>{
-  const last=c.messages[c.messages.length-1];
-  const item=document.createElement("div");
-  item.className="chat-item "+(current===c.id?"active":"");
-  item.innerHTML=`
-   <div class="avatar">${escapeHTML(c.name.charAt(0).toUpperCase())}</div>
-   <div class="chat-info">
-    <h3>${escapeHTML(c.name)}</h3>
-    <p>${last?escapeHTML(last.text):"Start a new conversation"}</p>
-   </div>
-   <div class="chat-time">${last?last.time:""}</div>`;
-  item.onclick=()=>openChat(c.id);
-  list.appendChild(item);
- });
+function saveContacts() {
+localStorage.setItem("hassam_cloud_contacts", JSON.stringify(contacts));
 }
 
-function escapeHTML(text){
- return String(text).replace(/[&<>"']/g,ch=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[ch]));
+function showAuth(show) {
+$("authWrap").style.display = show ? "flex" : "none";
 }
 
-function newChat(){
- document.getElementById("modal").style.display="flex";
- document.getElementById("contactName").value="";
- document.getElementById("contactName").focus();
+function friendlyError(error) {
+const msg = error?.message || "Something went wrong.";
+
+if (msg.toLowerCase().includes("invalid login"))
+return "Email ya password sahi nahi hai.";
+
+if (msg.toLowerCase().includes("already registered"))
+return "Is email ka account pehle se bana hua hai. Log in karo.";
+
+return msg;
 }
 
-function closeModal(){
- document.getElementById("modal").style.display="none";
+$("switchMode").addEventListener("click", () => {
+signupMode = !signupMode;
+
+$("displayName").style.display = signupMode ? "block" : "none";
+$("authSubmit").textContent = signupMode ? "Create account" : "Log in";
+$("switchText").textContent = signupMode ? "Already have an account?" : "New to HASSAM CHAT?";
+$("switchMode").textContent = signupMode ? "Log in" : "Create account";
+
+setStatus("authStatus", "");
+});
+
+$("authForm").addEventListener("submit", async event => {
+event.preventDefault();
+
+const email = $("email").value.trim();
+const password = $("password").value;
+const displayName = $("displayName").value.trim();
+
+$("authSubmit").disabled = true;
+setStatus("authStatus", signupMode ? "Creating account..." : "Logging in...");
+
+try {
+if (signupMode) {
+if (!displayName) throw new Error("Apna display name likho.");
+
+const {data,error} = await supabase.auth.signUp({
+email,
+password,
+options:{data:{display_name:displayName}}
+});
+
+if (error) throw error;
+
+if (data.session) {
+setStatus("authStatus","Account created. Opening HASSAM CHAT...",true);
+} else {
+setStatus("authStatus","Apni email inbox verify karo, phir Log in karo.",true);
 }
 
-function createContact(){
- const name=document.getElementById("contactName").value.trim();
- if(!name){alert("Please enter a name.");return;}
-
- const existing=contacts.find(c=>c.name.toLowerCase()===name.toLowerCase());
- if(existing){openChat(existing.id);closeModal();return;}
-
- const contact={
-  id:Date.now(),
-  name:name,
-  messages:[]
- };
- contacts.unshift(contact);
- save();
- closeModal();
- renderChats();
- openChat(contact.id);
+} else {
+const {error} = await supabase.auth.signInWithPassword({email,password});
+if (error) throw error;
 }
 
-function openChat(id){
- current=id;
- const c=contacts.find(x=>x.id===id);
- if(!c)return;
+} catch(error) {
+setStatus("authStatus",friendlyError(error));
+} finally {
+$("authSubmit").disabled = false;
+}
+});
 
- document.getElementById("welcome").style.display="none";
- document.getElementById("chatScreen").style.display="flex";
- document.getElementById("chatName").textContent=c.name;
- document.getElementById("chatAvatar").textContent=c.name.charAt(0).toUpperCase();
+async function loadMyProfile() {
+const {data,error} = await supabase.from("profiles")
+.select("id,user_id,display_name")
+.eq("id",user.id)
+.single();
 
- document.getElementById("app").classList.add("open-chat");
- renderMessages();
- renderChats();
+if(error) throw error;
+
+myProfile = data;
+
+$("myProfile").replaceChildren();
+
+const line1 = document.createElement("div");
+line1.textContent = "You: " + (myProfile.display_name || "User");
+
+const line2 = document.createElement("div");
+line2.append("Your HASSAM ID: ");
+
+const strong = document.createElement("strong");
+strong.textContent = myProfile.user_id;
+
+const copy = document.createElement("button");
+copy.textContent = " Copy ID";
+copy.className = "secondary";
+copy.style.padding = "4px 8px";
+copy.style.marginLeft = "6px";
+
+copy.addEventListener("click", async () => {
+try {
+await navigator.clipboard.writeText(myProfile.user_id);
+copy.textContent = " Copied!";
+} catch {
+copy.textContent = " Select ID above";
+}
+});
+
+line2.append(strong,copy);
+$("myProfile").append(line1,line2);
 }
 
-function renderMessages(){
- const c=contacts.find(x=>x.id===current);
- if(!c)return;
+function renderChats() {
+const list = $("chatList");
+const query = $("search").value.trim().toLowerCase();
 
- const box=document.getElementById("messages");
- box.innerHTML="";
+list.replaceChildren();
 
- c.messages.forEach(m=>{
-  const div=document.createElement("div");
-  div.className="msg sent";
-  div.innerHTML=escapeHTML(m.text)+"<time>"+m.time+"</time>";
-  box.appendChild(div);
- });
- box.scrollTop=box.scrollHeight;
+const filtered = contacts.filter(c =>
+(c.display_name || "").toLowerCase().includes(query) ||
+c.user_id.toLowerCase().includes(query)
+);
+
+if(!filtered.length) {
+const empty = document.createElement("div");
+empty.className = "empty";
+empty.textContent = contacts.length ? "No matching chats." : "No chats yet. Press ＋ to find a friend by ID.";
+list.append(empty);
+return;
 }
 
-function sendMessage(event){
- event.preventDefault();
- const input=document.getElementById("messageInput");
- const text=input.value.trim();
- if(!text||current===null)return;
+filtered.forEach(c => {
+const item = document.createElement("div");
+item.className = "chat-item" + (currentFriend?.id === c.id ? " active" : "");
 
- const c=contacts.find(x=>x.id===current);
- c.messages.push({
-  text:text,
-  time:new Date().toLocaleTimeString([],{
-   hour:"2-digit",minute:"2-digit"
-  })
- });
+const avatar = document.createElement("div");
+avatar.className = "avatar";
+avatar.textContent = (c.display_name || "?").charAt(0).toUpperCase();
 
- save();
- input.value="";
- renderMessages();
- renderChats();
+const info = document.createElement("div");
+info.className = "chat-info";
+
+const name = document.createElement("h3");
+name.textContent = c.display_name || "HASSAM CHAT user";
+
+const id = document.createElement("p");
+id.textContent = c.user_id;
+
+info.append(name,id);
+item.append(avatar,info);
+
+item.addEventListener("click",() => openChat(c));
+list.append(item);
+});
 }
 
-function toggleDark(){
- document.body.classList.toggle("dark");
- localStorage.setItem("hassam_dark",
-  document.body.classList.contains("dark")?"yes":"no");
+async function findFriend() {
+const entered = $("friendIdInput").value.trim().toUpperCase();
+
+if(!entered) {
+setStatus("friendStatus","Friend ka HASSAM ID likho.");
+return;
 }
 
-if(localStorage.getItem("hassam_dark")==="yes"){
- document.body.classList.add("dark");
+if(entered === myProfile.user_id) {
+setStatus("friendStatus","Ye tumhari apni ID hai.");
+return;
+}
+
+setStatus("friendStatus","Searching...");
+$("findFriendBtn").disabled = true;
+
+try {
+const {data,error} = await supabase.from("profiles")
+.select("id,user_id,display_name")
+.eq("user_id",entered)
+.maybeSingle();
+
+if(error) throw error;
+
+if(!data) {
+setStatus("friendStatus","Is ID ka user nahi mila. ID dobara check karo.");
+return;
+}
+
+if(!contacts.some(c => c.id === data.id)) {
+contacts.unshift(data);
+saveContacts();
 }
 
 renderChats();
+setStatus("friendStatus","Friend mil gaya!",true);
+
+setTimeout(() => {
+$("friendModal").style.display = "none";
+$("friendIdInput").value = "";
+openChat(data);
+},700);
+
+} catch(error) {
+setStatus("friendStatus",friendlyError(error));
+} finally {
+$("findFriendBtn").disabled = false;
+}
+}
+
+async function openChat(friend) {
+currentFriend = friend;
+
+$("welcome").style.display = "none";
+$("chatScreen").style.display = "flex";
+
+$("chatName").textContent = friend.display_name || "HASSAM CHAT user";
+$("chatId").textContent = friend.user_id;
+$("chatAvatar").textContent = (friend.display_name || "?").charAt(0).toUpperCase();
+
+$("app").classList.add("open-chat");
+
+renderChats();
+await loadMessages();
+subscribeToMessages();
+}
+
+function addMessageToView(message) {
+const div = document.createElement("div");
+
+div.dataset.messageId = message.id;
+div.className = "msg " + (message.sender_id === user.id ? "sent" : "received");
+
+const body = document.createElement("div");
+body.textContent = message.content;
+
+const time = document.createElement("time");
+time.textContent = new Date(message.created_at).toLocaleTimeString([],{
+hour:"2-digit",minute:"2-digit"
+});
+
+div.append(body,time);
+$("messages").append(div);
+}
+
+async function loadMessages() {
+$("messages").replaceChildren();
+
+const {data,error} = await supabase.from("messages")
+.select("id,sender_id,receiver_id,content,created_at")
+.or(`and(sender_id.eq.${user.id},receiver_id.eq.${currentFriend.id}),and(sender_id.eq.${currentFriend.id},receiver_id.eq.${user.id})`)
+.order("created_at",{ascending:true});
+
+if(error) {
+alert("Messages load nahi huay: " + error.message);
+return;
+}
+
+data.forEach(addMessageToView);
+$("messages").scrollTop = $("messages").scrollHeight;
+}
+
+function subscribeToMessages() {
+if(realtimeChannel) supabase.removeChannel(realtimeChannel);
+
+realtimeChannel = supabase.channel("chat-" + user.id + "-" + currentFriend.id)
+.on("postgres_changes",{
+event:"INSERT",
+schema:"public",
+table:"messages"
+},payload => {
+
+const m = payload.new;
+
+const belongs =
+(m.sender_id === user.id && m.receiver_id === currentFriend.id) ||
+(m.sender_id === currentFriend.id && m.receiver_id === user.id);
+
+if(belongs && !$("messages").querySelector(`[data-message-id="${m.id}"]`)) {
+addMessageToView(m);
+$("messages").scrollTop = $("messages").scrollHeight;
+}
+
+}).subscribe();
+}
+
+$("messageForm").addEventListener("submit",async event => {
+event.preventDefault();
+
+const content = $("messageInput").value.trim();
+if(!content || !currentFriend) return;
+
+$("messageInput").disabled = true;
+
+try {
+const {error} = await supabase.from("messages").insert({
+sender_id:user.id,
+receiver_id:currentFriend.id,
+content
+});
+
+if(error) throw error;
+
+$("messageInput").value = "";
+await loadMessages();
+
+} catch(error) {
+alert("Message send nahi hua: " + error.message);
+} finally {
+$("messageInput").disabled = false;
+$("messageInput").focus();
+}
+});
+
+$("addFriendBtn").addEventListener("click",() => {
+$("friendModal").style.display = "flex";
+$("friendIdInput").value = "";
+setStatus("friendStatus","");
+$("friendIdInput").focus();
+});
+
+$("closeFriendBtn").addEventListener("click",() => {
+$("friendModal").style.display = "none";
+});
+
+$("findFriendBtn").addEventListener("click",findFriend);
+
+$("friendIdInput").addEventListener("keydown",e => {
+if(e.key === "Enter") findFriend();
+});
+
+$("search").addEventListener("input",renderChats);
+
+$("backBtn").addEventListener("click",() => {
+$("app").classList.remove("open-chat");
+});
+
+$("darkBtn").addEventListener("click",() => {
+document.body.classList.toggle("dark");
+localStorage.setItem("hassam_dark",document.body.classList.contains("dark") ? "yes" : "no");
+});
+
+if(localStorage.getItem("hassam_dark") === "yes") {
+document.body.classList.add("dark");
+}
+
+$("logoutBtn").addEventListener("click",async () => {
+const {error} = await supabase.auth.signOut();
+if(error) alert(error.message);
+});
+
+// INSTALL APP FEATURE
+let installPromptEvent = null;
+
+window.addEventListener("beforeinstallprompt",event => {
+event.preventDefault();
+installPromptEvent = event;
+$("installBtn").style.display = "inline-block";
+});
+
+$("installBtn").addEventListener("click",async () => {
+if(!installPromptEvent) {
+alert("Chrome ke 3 dots mein jao aur Install app ya Add to Home screen select karo.");
+return;
+}
+
+installPromptEvent.prompt();
+await installPromptEvent.userChoice;
+
+installPromptEvent = null;
+$("installBtn").style.display = "none";
+});
+
+window.addEventListener("appinstalled",() => {
+$("installBtn").style.display = "none";
+installPromptEvent = null;
+});
+
+// DOWNLOAD CHAT FEATURE
+$("downloadChatBtn").addEventListener("click",async () => {
+if(!currentFriend) return;
+
+const {data,error} = await supabase.from("messages")
+.select("sender_id,content,created_at")
+.or(`and(sender_id.eq.${user.id},receiver_id.eq.${currentFriend.id}),and(sender_id.eq.${currentFriend.id},receiver_id.eq.${user.id})`)
+.order("created_at",{ascending:true});
+
+if(error) {
+alert("Chat download nahi hui: " + error.message);
+return;
+}
+
+const lines = [
+"HASSAM CHAT",
+"Conversation with: " + (currentFriend.display_name || "User"),
+"HASSAM ID: " + currentFriend.user_id,
+"----------------------------------------",
+...data.map(m => {
+const who = m.sender_id === user.id ? "You" : (currentFriend.display_name || "Friend");
+const when = new Date(m.created_at).toLocaleString();
+return `[${when}] ${who}: ${m.content}`;
+})
+];
+
+const blob = new Blob([lines.join("\n")],{
+type:"text/plain;charset=utf-8"
+});
+
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+
+a.href = url;
+a.download = "HASSAM-CHAT-" + currentFriend.user_id + ".txt";
+
+document.body.append(a);
+a.click();
+a.remove();
+
+URL.revokeObjectURL(url);
+});
+
+async function startApp(sessionUser) {
+user = sessionUser;
+
+if(!user) {
+showAuth(true);
+$("myProfile").textContent = "Please log in";
+return;
+}
+
+try {
+await loadMyProfile();
+renderChats();
+showAuth(false);
+
+} catch(error) {
+showAuth(true);
+setStatus("authStatus","Profile load error: " + error.message);
+}
+}
+
+supabase.auth.onAuthStateChange((_event,session) => {
+if(session?.user) {
+setTimeout(() => startApp(session.user),0);
+} else {
+user = null;
+myProfile = null;
+currentFriend = null;
+contacts = [];
+
+localStorage.removeItem("hassam_cloud_contacts");
+
+if(realtimeChannel) supabase.removeChannel(realtimeChannel);
+
+$("chatList").replaceChildren();
+$("myProfile").textContent = "Please log in";
+$("chatScreen").style.display = "none";
+$("welcome").style.display = "flex";
+$("app").classList.remove("open-chat");
+
+showAuth(true);
+}
+});
+
+const {data:{session}} = await supabase.auth.getSession();
+await startApp(session?.user || null);
+
 </script>
- <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(function () {
-        console.log("HASSAM CHAT Offline Ready!");
-      })
-      .catch(function (error) {
-        console.log("Offline Error:", error);
-      });
-  });
+
+<script>
+if("serviceWorker" in navigator) {
+window.addEventListener("load",() => {
+navigator.serviceWorker.register("./service-worker.js")
+.catch(error => console.log("Service Worker Error:",error));
+});
 }
 </script>
+
 </body>
- <script>
-let installPrompt;
-
-const installBtn = document.getElementById("installBtn");
-
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  installPrompt = event;
-  installBtn.style.display = "inline-block";
-});
-
-installBtn.addEventListener("click", async () => {
-  if (!installPrompt) return;
-
-  installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null;
-  installBtn.style.display = "none";
-});
-
-window.addEventListener("appinstalled", () => {
-  installBtn.style.display = "none";
-});
-</script>
 </html>
