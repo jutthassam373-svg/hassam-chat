@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
+<meta name="theme-color" content="#080d1c">
 <title>HASSAM CHAT</title>
 
 <link rel="manifest" href="manifest.json">
@@ -13,97 +13,119 @@
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#07111f;color:white;
+ margin:0;
  font-family:Arial,sans-serif;
-}
-button,input{font:inherit}
-button{
- background:#08c9c9;color:#001b22;border:0;
- padding:12px 16px;border-radius:9px;
- cursor:pointer;font-weight:bold;
-}
-input{
- width:100%;padding:13px;margin:7px 0;
- background:#142438;color:white;
- border:1px solid #29425c;border-radius:9px;
+ background:#080d1c;
+ color:white;
 }
 header{
- padding:18px;background:#0d1d30;
- display:flex;justify-content:space-between;
- align-items:center;border-bottom:1px solid #23394f;
+ background:#111a30;
+ padding:18px;
+ text-align:center;
+ border-bottom:1px solid #263858;
 }
-header h2{margin:0;color:#12d9d9}
-.container{max-width:850px;margin:auto;padding:15px}
+header h1{margin:0;color:#38d9ff}
+.container{
+ max-width:850px;
+ margin:20px auto;
+ padding:15px;
+}
 .card{
- background:#102238;padding:20px;
- border-radius:14px;margin-top:20px;
+ background:#111a30;
+ padding:20px;
+ border-radius:14px;
+ margin-bottom:15px;
+ border:1px solid #263858;
 }
-.hidden{display:none!important}
-#contacts button{
- display:block;width:100%;margin:8px 0;
- text-align:left;background:#19334d;color:white;
+input,button{
+ width:100%;
+ padding:13px;
+ margin:7px 0;
+ border-radius:8px;
+ border:none;
+ font-size:15px;
 }
-#messages{
- height:55vh;overflow-y:auto;
- background:#091827;padding:12px;
- border-radius:12px;margin:12px 0;
+input{background:#202c45;color:white}
+button{
+ background:#08b9e8;
+ color:#00111b;
+ font-weight:bold;
+ cursor:pointer;
+}
+button:hover{background:#42d7ff}
+.secondary{background:#35435f;color:white}
+.danger{background:#a93232;color:white}
+.hidden{display:none}
+#chatBox{
+ height:300px;
+ overflow-y:auto;
+ background:#080f20;
+ padding:12px;
+ border-radius:10px;
 }
 .msg{
- background:#193c52;padding:11px;
- border-radius:12px;margin:8px 0;
- max-width:80%;overflow-wrap:anywhere;
+ background:#1d3150;
+ padding:10px;
+ border-radius:10px;
+ margin:8px 0;
+ max-width:85%;
+ overflow-wrap:anywhere;
 }
-.mine{background:#087f83;margin-left:auto}
-.small{font-size:12px;color:#a8bacb}
-.row{display:flex;gap:8px}
-.row input{flex:1;min-width:0}
-#status{color:#18dddd}
-footer{text-align:center;color:#8fa6bb;padding:20px}
+.mine{
+ background:#075b78;
+ margin-left:auto;
+}
+.small{font-size:12px;color:#aabbd4}
+.contact{
+ padding:12px;
+ background:#202c45;
+ border-radius:8px;
+ margin:8px 0;
+ cursor:pointer;
+}
+.contact:hover{background:#304363}
+.status{color:#38d9ff}
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>💬 HASSAM CHAT</h2>
-<div class="row">
-<button id="installBtn" class="hidden">⬇ Install</button>
-<button onclick="toggleDark()">☾</button>
-</div>
+<h1>HASSAM CHAT</h1>
+<p>Connect • Chat • Share</p>
 </header>
 
 <div class="container">
 
-<!-- AUTH -->
-<section id="auth" class="card">
-<h2>💬 HASSAM CHAT</h2>
-<p>Create your account or log in</p>
+<div class="card" id="authBox">
+<h2>Welcome to HASSAM CHAT</h2>
 
 <input id="email" type="email" placeholder="Your Email">
 <input id="password" type="password" placeholder="Password">
 
-<div class="row">
-<button onclick="signup()">Create Account</button>
-<button onclick="login()">Log In</button>
+<button onclick="login()">Login</button>
+<button class="secondary" onclick="signup()">Create New Account</button>
+
+<p id="authStatus" class="small"></p>
 </div>
 
-<p id="authStatus"></p>
-</section>
-
-<!-- APP -->
-<section id="app" class="hidden">
+<div id="appBox" class="hidden">
 
 <div class="card">
-<h3>Welcome to HASSAM CHAT</h3>
-<p>Your HASSAM ID: <b id="myId">Loading...</b></p>
-<button onclick="logout()">Logout</button>
+<h2>Welcome to HASSAM CHAT</h2>
+<p>Your HASSAM ID:</p>
+<h2 class="status" id="myId">Loading...</h2>
+<button class="secondary" onclick="logout()">Logout</button>
+<button onclick="installApp()" id="installBtn" class="hidden">
+📲 Install HASSAM CHAT
+</button>
 </div>
 
 <div class="card">
 <h3>➕ Add New Contact</h3>
-<input id="friendId" placeholder="Enter Friend HASSAM ID">
+<input id="contactId" placeholder="Enter HASSAM ID">
 <button onclick="addContact()">Add Contact</button>
-<p id="contactStatus"></p>
+<p id="contactStatus" class="small"></p>
 </div>
 
 <div class="card">
@@ -111,29 +133,27 @@ footer{text-align:center;color:#8fa6bb;padding:20px}
 <div id="contacts">No contacts added yet.</div>
 </div>
 
-<div class="card">
+<div class="card" id="chatArea">
 <h3 id="chatTitle">Select a contact to start chatting</h3>
-<div id="messages">
-<p class="small">Your online chat will appear here.</p>
+
+<div id="chatBox">
+Your online chat will appear here.
 </div>
 
-<div class="row">
-<input id="messageInput" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMessage()">
-<button onclick="sendMessage()">Send</button>
-</div>
-</div>
-
-</section>
+<input id="messageInput" placeholder="Type your message..." disabled>
+<button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+<p id="chatStatus" class="small"></p>
 </div>
 
-<footer>
-Made with ❤️ by HASSAM JUTT
-</footer>
+</div>
+</div>
 
 <script>
-const SUPABASE_URL = "https://yggxqcinxphommhscoyt.supabase.co";
+const SUPABASE_URL =
+"https://yggxqcinxphommhscoyt.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_QrZdIxrSJEW72nmiBkwNuQ_55iBU0yD";
+const SUPABASE_KEY =
+"sb_publishable_QrZdIxrSJEW72nmiBkwNuQ_55iBU0yD";
 
 const db = window.supabase.createClient(
  SUPABASE_URL,
@@ -142,45 +162,14 @@ const db = window.supabase.createClient(
 
 let currentUser = null;
 let myProfile = null;
-let activeFriend = null;
+let selectedContact = null;
 let contacts = [];
 let realtimeChannel = null;
 
 const $ = id => document.getElementById(id);
 
-function showStatus(message){
- $("authStatus").textContent = message;
-}
-
-async function signup(){
- const email = $("email").value.trim();
- const password = $("password").value;
-
- if(!email || password.length < 8){
-  showStatus("Email likho aur password kam az kam 8 characters ka rakho.");
-  return;
- }
-
- showStatus("Account ban raha hai...");
-
- const {data,error} = await db.auth.signUp({
-  email,
-  password,
-  options:{
-   emailRedirectTo:location.origin + location.pathname
-  }
- });
-
- if(error){
-  showStatus(error.message);
-  return;
- }
-
- if(data.session){
-  await startApp(data.session.user);
- }else{
-  showStatus("Apni email inbox verify karo, phir Log in karo.");
- }
+function status(id,text){
+ $(id).textContent = text;
 }
 
 async function login(){
@@ -188,49 +177,75 @@ async function login(){
  const password = $("password").value;
 
  if(!email || !password){
-  showStatus("Email aur password dono likho.");
+  status("authStatus","Email aur password likho.");
   return;
  }
 
- showStatus("Logging in...");
+ status("authStatus","Logging in...");
 
- const {data,error} = await db.auth.signInWithPassword({
+ const {error} = await db.auth.signInWithPassword({
   email,password
  });
 
  if(error){
-  showStatus(error.message);
+  status("authStatus",error.message);
   return;
  }
 
- await startApp(data.user);
+ await startApp();
 }
 
-async function logout(){
- await db.auth.signOut();
- location.reload();
+async function signup(){
+ const email = $("email").value.trim();
+ const password = $("password").value;
+
+ if(!email || password.length < 6){
+  status("authStatus","Valid email aur kam az kam 6 characters ka password likho.");
+  return;
+ }
+
+ status("authStatus","Account ban raha hai...");
+
+ const {data,error} = await db.auth.signUp({
+  email,
+  password,
+  options:{
+   data:{display_name:email.split("@")[0]}
+  }
+ });
+
+ if(error){
+  status("authStatus",error.message);
+  return;
+ }
+
+ if(!data.session){
+  status("authStatus","Account ban gaya! Email confirmation ke baad login karo.");
+  return;
+ }
+
+ await startApp();
 }
 
-async function startApp(user){
- currentUser = user;
+async function startApp(){
+ const {data,error} = await db.auth.getUser();
 
- $("auth").classList.add("hidden");
- $("app").classList.remove("hidden");
+ if(error || !data.user){
+  status("authStatus","Login session nahi mili.");
+  return;
+ }
+
+ currentUser = data.user;
+
+ $("authBox").classList.add("hidden");
+ $("appBox").classList.remove("hidden");
 
  await loadProfile();
-
- if(!myProfile){
-  alert("Profile nahi mili. Supabase profile trigger check karo.");
-  return;
- }
-
- $("myId").textContent = myProfile.user_id;
-
- loadContacts();
- startRealtime();
 }
 
 async function loadProfile(){
+ status("chatStatus","Profile load ho rahi hai...");
+
  const {data,error} = await db
   .from("profiles")
   .select("*")
@@ -238,30 +253,44 @@ async function loadProfile(){
   .maybeSingle();
 
  if(error){
-  console.error(error);
+  status("myId","Profile Error");
+  status("chatStatus",error.message);
+  return;
+ }
+
+ if(!data){
+  status("myId","Profile nahi mili");
+  status("chatStatus","Supabase profiles table mein tumhara record nahi mila.");
   return;
  }
 
  myProfile = data;
+ status("myId",data.user_id);
+
+ loadContacts();
+ startRealtime();
 }
 
-function contactStorageKey(){
- return "hassam_contacts_" + currentUser.id;
-}
-
-function loadContacts(){
- contacts = JSON.parse(
-  localStorage.getItem(contactStorageKey()) || "[]"
- );
-
- renderContacts();
+function getSavedContacts(){
+ try{
+  return JSON.parse(
+   localStorage.getItem("hj_contacts_"+currentUser.id)
+  ) || [];
+ }catch(e){
+  return [];
+ }
 }
 
 function saveContacts(){
  localStorage.setItem(
-  contactStorageKey(),
+  "hj_contacts_"+currentUser.id,
   JSON.stringify(contacts)
  );
+}
+
+async function loadContacts(){
+ contacts = getSavedContacts();
+ renderContacts();
 }
 
 function renderContacts(){
@@ -273,28 +302,31 @@ function renderContacts(){
   return;
  }
 
- contacts.forEach(friend=>{
-  const btn = document.createElement("button");
-  btn.textContent = "💬 " + friend.display_name +
-   " (" + friend.user_id + ")";
+ contacts.forEach(c=>{
+  const div = document.createElement("div");
+  div.className = "contact";
+  div.textContent = "💬 " + c.display_name +
+   " (" + c.user_id + ")";
 
-  btn.onclick = ()=>openChat(friend);
-  box.appendChild(btn);
+  div.onclick = ()=>openChat(c);
+  box.appendChild(div);
  });
 }
 
 async function addContact(){
- const id = $("friendId").value.trim().toUpperCase();
+ const id = $("contactId").value.trim().toUpperCase();
 
  if(!id){
-  $("contactStatus").textContent = "HASSAM ID likho.";
+  status("contactStatus","HASSAM ID likho.");
   return;
  }
 
  if(id === myProfile.user_id){
-  $("contactStatus").textContent = "Apni ID add nahi kar sakte.";
+  status("contactStatus","Apni ID add nahi kar sakte.");
   return;
  }
+
+ status("contactStatus","Contact search ho raha hai...");
 
  const {data,error} = await db
   .from("profiles")
@@ -303,17 +335,17 @@ async function addContact(){
   .maybeSingle();
 
  if(error){
-  $("contactStatus").textContent = error.message;
+  status("contactStatus",error.message);
   return;
  }
 
  if(!data){
-  $("contactStatus").textContent = "Ye HASSAM ID nahi mili.";
+  status("contactStatus","Ye HASSAM ID nahi mili.");
   return;
  }
 
  if(contacts.some(c=>c.id===data.id)){
-  $("contactStatus").textContent = "Ye contact pehle se added hai.";
+  status("contactStatus","Contact pehle se added hai.");
   return;
  }
 
@@ -321,37 +353,44 @@ async function addContact(){
  saveContacts();
  renderContacts();
 
- $("friendId").value = "";
- $("contactStatus").textContent = "Contact successfully added!";
+ $("contactId").value = "";
+ status("contactStatus","Contact successfully added!");
 }
 
-async function openChat(friend){
- activeFriend = friend;
+async function openChat(contact){
+ selectedContact = contact;
 
  $("chatTitle").textContent =
-  "💬 " + friend.display_name + " (" + friend.user_id + ")";
+ "Chat with " + contact.display_name;
+
+ $("messageInput").disabled = false;
+ $("sendBtn").disabled = false;
 
  await loadMessages();
 }
 
 async function loadMessages(){
- if(!activeFriend) return;
+ if(!selectedContact) return;
+
+ status("chatStatus","Messages load ho rahe hain...");
+
+ const a = currentUser.id;
+ const b = selectedContact.id;
 
  const {data,error} = await db
   .from("messages")
   .select("*")
   .or(
-   `and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeFriend.id}),and(sender_id.eq.${activeFriend.id},receiver_id.eq.${currentUser.id})`
+   `and(sender_id.eq.${a},receiver_id.eq.${b}),and(sender_id.eq.${b},receiver_id.eq.${a})`
   )
   .order("created_at",{ascending:true});
 
  if(error){
-  console.error(error);
-  $("messages").textContent = "Messages load nahi ho sake: " + error.message;
+  status("chatStatus","Messages load nahi ho sake: "+error.message);
   return;
  }
 
- const box = $("messages");
+ const box = $("chatBox");
  box.innerHTML = "";
 
  if(!data.length){
@@ -359,51 +398,65 @@ async function loadMessages(){
   return;
  }
 
- data.forEach(message=>{
-  const div = document.createElement("div");
-  div.className = "msg " +
-   (message.sender_id===currentUser.id ? "mine" : "");
+ data.forEach(m=>showMessage(m));
 
-  const text = document.createElement("div");
-  text.textContent = message.content;
+ box.scrollTop = box.scrollHeight;
+ status("chatStatus","");
+}
 
-  const time = document.createElement("div");
-  time.className = "small";
-  time.textContent = new Date(message.created_at)
-   .toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+function showMessage(m){
+ const box = $("chatBox");
 
-  div.appendChild(text);
-  div.appendChild(time);
-  box.appendChild(div);
- });
+ const div = document.createElement("div");
+ div.className = "msg";
+
+ if(m.sender_id === currentUser.id){
+  div.classList.add("mine");
+ }
+
+ const text = document.createElement("div");
+ text.textContent = m.content;
+
+ const time = document.createElement("div");
+ time.className = "small";
+ time.textContent = new Date(m.created_at).toLocaleString();
+
+ div.appendChild(text);
+ div.appendChild(time);
+ box.appendChild(div);
 
  box.scrollTop = box.scrollHeight;
 }
 
 async function sendMessage(){
- if(!activeFriend){
-  alert("Pehle contact select karo.");
-  return;
- }
+ if(!selectedContact) return;
 
  const content = $("messageInput").value.trim();
+
  if(!content) return;
 
- $("messageInput").value = "";
+ $("sendBtn").disabled = true;
 
- const {error} = await db.from("messages").insert({
-  sender_id:currentUser.id,
-  receiver_id:activeFriend.id,
-  content:content
- });
+ const {data,error} = await db
+  .from("messages")
+  .insert({
+   sender_id:currentUser.id,
+   receiver_id:selectedContact.id,
+   content:content
+  })
+  .select()
+  .single();
+
+ $("sendBtn").disabled = false;
 
  if(error){
-  alert("Message send nahi hua: " + error.message);
-  $("messageInput").value = content;
+  status("chatStatus","Message send nahi hua: "+error.message);
   return;
  }
 
- await loadMessages();
+ $("messageInput").value = "";
+ showMessage(data);
+ status("chatStatus","Message sent!");
 }
 
 function startRealtime(){
@@ -412,7 +465,7 @@ function startRealtime(){
  }
 
  realtimeChannel = db
-  .channel("hassam-chat-" + currentUser.id)
+  .channel("messages-"+currentUser.id)
   .on(
    "postgres_changes",
    {
@@ -421,17 +474,17 @@ function startRealtime(){
     table:"messages"
    },
    payload=>{
-    const msg = payload.new;
+    const m = payload.new;
 
-    if(
-     activeFriend &&
-     (
-      (msg.sender_id===currentUser.id &&
-       msg.receiver_id===activeFriend.id) ||
-      (msg.sender_id===activeFriend.id &&
-       msg.receiver_id===currentUser.id)
-     )
-    ){
+    if(!selectedContact) return;
+
+    const belongs =
+     (m.sender_id===currentUser.id &&
+      m.receiver_id===selectedContact.id) ||
+     (m.sender_id===selectedContact.id &&
+      m.receiver_id===currentUser.id);
+
+    if(belongs){
      loadMessages();
     }
    }
@@ -439,39 +492,30 @@ function startRealtime(){
   .subscribe();
 }
 
-function toggleDark(){
- document.body.classList.toggle("light");
-
- if(document.body.classList.contains("light")){
-  document.body.style.background="#e8f0f7";
-  document.body.style.color="#102238";
- }else{
-  document.body.style.background="#07111f";
-  document.body.style.color="white";
+async function logout(){
+ if(realtimeChannel){
+  await db.removeChannel(realtimeChannel);
  }
+
+ await db.auth.signOut();
+ location.reload();
 }
 
-// Existing login session check
-(async()=>{
- const {data} = await db.auth.getSession();
+$("messageInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter") sendMessage();
+});
 
- if(data.session){
-  await startApp(data.session.user);
- }
-})();
-
-// PWA INSTALL BUTTON
 let installPrompt = null;
 
-window.addEventListener("beforeinstallprompt",event=>{
- event.preventDefault();
- installPrompt = event;
+window.addEventListener("beforeinstallprompt",e=>{
+ e.preventDefault();
+ installPrompt = e;
  $("installBtn").classList.remove("hidden");
 });
 
-$("installBtn").addEventListener("click",async()=>{
+async function installApp(){
  if(!installPrompt){
-  alert("Chrome menu se Install App ya Add to Home Screen select karo.");
+  alert("Chrome menu se Install page as app try karo.");
   return;
  }
 
@@ -479,20 +523,16 @@ $("installBtn").addEventListener("click",async()=>{
  await installPrompt.userChoice;
  installPrompt = null;
  $("installBtn").classList.add("hidden");
-});
-
-window.addEventListener("appinstalled",()=>{
- $("installBtn").classList.add("hidden");
- alert("HASSAM CHAT successfully installed!");
-});
-
-// Service worker
-if("serviceWorker" in navigator){
- window.addEventListener("load",()=>{
-  navigator.serviceWorker.register("./service-worker.js")
-   .catch(error=>console.log("Service worker:",error));
- });
 }
+
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("./sw.js")
+  .catch(err=>console.log("SW:",err));
+}
+
+db.auth.getSession().then(({data})=>{
+ if(data.session) startApp();
+});
 </script>
 
 </body>
