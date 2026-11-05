@@ -3,88 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d1c">
+<meta name="theme-color" content="#081525">
+<meta name="description" content="HASSAM CHAT — Connect, chat and share with your HASSAM contacts.">
 <title>HASSAM CHAT</title>
 
 <link rel="manifest" href="manifest.json">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#101e33;--panel2:#142641;--line:#263c5b;--cyan:#38d9ff;--text:#f4f8ff;--muted:#9eb0c9;--accent:#08b9e8}
 *{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#080d1c;
- color:white;
-}
-header{
- background:#111a30;
- padding:18px;
- text-align:center;
- border-bottom:1px solid #263858;
-}
-header h1{margin:0;color:#38d9ff}
-.container{
- max-width:850px;
- margin:20px auto;
- padding:15px;
-}
-.card{
- background:#111a30;
- padding:20px;
- border-radius:14px;
- margin-bottom:15px;
- border:1px solid #263858;
-}
-input,button{
- width:100%;
- padding:13px;
- margin:7px 0;
- border-radius:8px;
- border:none;
- font-size:15px;
-}
-input{background:#202c45;color:white}
-button{
- background:#08b9e8;
- color:#00111b;
- font-weight:bold;
- cursor:pointer;
-}
-button:hover{background:#42d7ff}
-.secondary{background:#35435f;color:white}
+body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(ellipse at top,#142b48 0%,#081525 48%,#050b14 100%);color:var(--text)}
+header{position:sticky;top:0;z-index:5;background:rgba(8,19,34,.88);backdrop-filter:blur(14px);padding:20px 16px;text-align:center;border-bottom:1px solid rgba(89,137,190,.22);box-shadow:0 8px 30px #0003}
+header h1{margin:0;color:var(--cyan);font-size:clamp(23px,4vw,30px);font-weight:800;letter-spacing:3px;text-shadow:0 0 22px #38d9ff55}
+header p{margin:6px 0 0;color:var(--muted);font-size:13px;letter-spacing:1.5px}
+.container{width:min(1120px,100%);margin:26px auto;padding:0 18px 35px}
+.card{background:linear-gradient(145deg,rgba(20,38,65,.96),rgba(12,26,45,.97));padding:22px;border-radius:18px;margin-bottom:16px;border:1px solid rgba(112,157,207,.2);box-shadow:0 14px 35px #0003;min-width:0}
+.card h2,.card h3{margin-top:0;color:#f4f8ff}
+#authBox{max-width:440px;margin:55px auto;padding:30px}
+#authBox h2{text-align:center;color:var(--cyan);margin-bottom:24px}
+#appBox{display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,1.35fr);gap:16px;align-items:stretch}
+#appBox>.card{margin:0}
+#appBox>.card:first-child{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#appBox>.card:first-child h2{margin:0}
+#appBox>.card:first-child p{margin:0;color:var(--muted)}
+#appBox>.card:first-child #myId{margin:0 auto 0 0;font-size:22px;letter-spacing:1.5px}
+#appBox>.card:first-child button{width:auto;min-width:135px}
+#appBox>.card:nth-child(2),#appBox>.card:nth-child(3){grid-column:1}
+#chatArea{grid-column:2;grid-row:2/span 2;display:flex;flex-direction:column;min-height:420px}
+input,button{width:100%;padding:13px 15px;margin:7px 0;border-radius:10px;border:1px solid transparent;font:inherit;font-size:14px}
+input{background:#091629;color:var(--text);border-color:#2a4263;outline:none;transition:.2s}
+input::placeholder{color:#7186a3}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #38d9ff20}
+button{background:linear-gradient(135deg,#08b9e8,#27d2ef);color:#03111b;font-weight:750;cursor:pointer;transition:transform .18s,filter .18s;box-shadow:0 5px 16px #08b9e822}
+button:hover{filter:brightness(1.1);transform:translateY(-1px)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.secondary{background:#263b59;color:#e8f4ff;border-color:#3a5578;box-shadow:none}
 .danger{background:#a93232;color:white}
-.hidden{display:none}
-#chatBox{
- height:300px;
- overflow-y:auto;
- background:#080f20;
- padding:12px;
- border-radius:10px;
+.hidden{display:none!important}
+#chatBox{height:100%;min-height:260px;max-height:470px;overflow-y:auto;background:rgba(4,13,25,.7);padding:15px;border-radius:13px;border:1px solid #263b59;scroll-behavior:smooth}
+.msg{background:#1d3150;padding:11px 14px;border-radius:14px;margin:9px 0;max-width:85%;overflow-wrap:anywhere;border:1px solid #385272;line-height:1.45}
+.mine{background:linear-gradient(135deg,#075b78,#087a91);margin-left:auto;border-color:#1598b5}
+.small{font-size:12px;color:var(--muted)}
+.contact{padding:13px 14px;background:#0d1c31;border:1px solid #2a4263;border-radius:12px;margin:9px 0;cursor:pointer;transition:.18s;overflow-wrap:anywhere}
+.contact:hover{background:#183454;border-color:#38d9ff;transform:translateX(2px)}
+.status{color:var(--cyan)}
+#chatTitle{margin-bottom:14px;color:var(--cyan)}
+#messageInput{margin-top:14px}
+#chatStatus,#contactStatus{min-height:16px}
+@media(max-width:760px){
+.container{margin:16px auto;padding:0 12px 24px}
+#appBox{grid-template-columns:1fr}
+#appBox>.card:first-child{grid-column:1;align-items:flex-start}
+#appBox>.card:first-child #myId{width:100%;margin:0}
+#appBox>.card:first-child button{flex:1}
+#appBox>.card:nth-child(2),#appBox>.card:nth-child(3),#chatArea{grid-column:1;grid-row:auto}
+#chatArea{min-height:380px}
+.card{padding:18px}
 }
-.msg{
- background:#1d3150;
- padding:10px;
- border-radius:10px;
- margin:8px 0;
- max-width:85%;
- overflow-wrap:anywhere;
+@media(max-width:420px){
+header{padding:16px 10px}
+.container{padding-left:9px;padding-right:9px}
+#appBox>.card:first-child button{width:100%}
+#chatBox{min-height:240px}
+.msg{max-width:94%}
 }
-.mine{
- background:#075b78;
- margin-left:auto;
-}
-.small{font-size:12px;color:#aabbd4}
-.contact{
- padding:12px;
- background:#202c45;
- border-radius:8px;
- margin:8px 0;
- cursor:pointer;
-}
-.contact:hover{background:#304363}
-.status{color:#38d9ff}
 </style>
 </head>
 
@@ -118,7 +101,6 @@ button:hover{background:#42d7ff}
 <button class="secondary" onclick="logout()">Logout</button>
 <button onclick="installApp()" id="installBtn">
 📲 INSTALL HASSAM CHAT
-
 </button>
 </div>
 
@@ -136,11 +118,7 @@ button:hover{background:#42d7ff}
 
 <div class="card" id="chatArea">
 <h3 id="chatTitle">Select a contact to start chatting</h3>
-
-<div id="chatBox">
-Your online chat will appear here.
-</div>
-
+<div id="chatBox">Your online chat will appear here.</div>
 <input id="messageInput" placeholder="Type your message..." disabled>
 <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
 <p id="chatStatus" class="small"></p>
@@ -157,8 +135,8 @@ const SUPABASE_KEY =
 "sb_publishable_QrZdIxrSJEW72nmiBkwNuQ_55iBU0yD";
 
 const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 let currentUser = null;
@@ -170,369 +148,369 @@ let realtimeChannel = null;
 const $ = id => document.getElementById(id);
 
 function status(id,text){
- $(id).textContent = text;
+$(id).textContent = text;
 }
 
 async function login(){
- const email = $("email").value.trim();
- const password = $("password").value;
+const email = $("email").value.trim();
+const password = $("password").value;
 
- if(!email || !password){
-  status("authStatus","Email aur password likho.");
-  return;
- }
+if(!email || !password){
+status("authStatus","Email aur password likho.");
+return;
+}
 
- status("authStatus","Logging in...");
+status("authStatus","Logging in...");
 
- const {error} = await db.auth.signInWithPassword({
-  email,password
- });
+const {error} = await db.auth.signInWithPassword({
+email,password
+});
 
- if(error){
-  status("authStatus",error.message);
-  return;
- }
+if(error){
+status("authStatus",error.message);
+return;
+}
 
- await startApp();
+await startApp();
 }
 
 async function signup(){
- const email = $("email").value.trim();
- const password = $("password").value;
+const email = $("email").value.trim();
+const password = $("password").value;
 
- if(!email || password.length < 6){
-  status("authStatus","Valid email aur kam az kam 6 characters ka password likho.");
-  return;
- }
+if(!email || password.length < 6){
+status("authStatus","Valid email aur kam az kam 6 characters ka password likho.");
+return;
+}
 
- status("authStatus","Account ban raha hai...");
+status("authStatus","Account ban raha hai...");
 
- const {data,error} = await db.auth.signUp({
-  email,
-  password,
-  options:{
-   data:{display_name:email.split("@")[0]}
-  }
- });
+const {data,error} = await db.auth.signUp({
+email,
+password,
+options:{
+data:{display_name:email.split("@")[0]}
+}
+});
 
- if(error){
-  status("authStatus",error.message);
-  return;
- }
+if(error){
+status("authStatus",error.message);
+return;
+}
 
- if(!data.session){
-  status("authStatus","Account ban gaya! Email confirmation ke baad login karo.");
-  return;
- }
+if(!data.session){
+status("authStatus","Account ban gaya! Email confirmation ke baad login karo.");
+return;
+}
 
- await startApp();
+await startApp();
 }
 
 async function startApp(){
- const {data,error} = await db.auth.getUser();
+const {data,error} = await db.auth.getUser();
 
- if(error || !data.user){
-  status("authStatus","Login session nahi mili.");
-  return;
- }
+if(error || !data.user){
+status("authStatus","Login session nahi mili.");
+return;
+}
 
- currentUser = data.user;
+currentUser = data.user;
 
- $("authBox").classList.add("hidden");
- $("appBox").classList.remove("hidden");
+$("authBox").classList.add("hidden");
+$("appBox").classList.remove("hidden");
 
- await loadProfile();
+await loadProfile();
 }
 
 async function loadProfile(){
- status("chatStatus","Profile load ho rahi hai...");
+status("chatStatus","Profile load ho rahi hai...");
 
- const {data,error} = await db
-  .from("profiles")
-  .select("*")
-  .eq("id",currentUser.id)
-  .maybeSingle();
+const {data,error} = await db
+.from("profiles")
+.select("*")
+.eq("id",currentUser.id)
+.maybeSingle();
 
- if(error){
-  status("myId","Profile Error");
-  status("chatStatus",error.message);
-  return;
- }
+if(error){
+status("myId","Profile Error");
+status("chatStatus",error.message);
+return;
+}
 
- if(!data){
-  status("myId","Profile nahi mili");
-  status("chatStatus","Supabase profiles table mein tumhara record nahi mila.");
-  return;
- }
+if(!data){
+status("myId","Profile nahi mili");
+status("chatStatus","Supabase profiles table mein tumhara record nahi mila.");
+return;
+}
 
- myProfile = data;
- status("myId",data.user_id);
+myProfile = data;
+status("myId",data.user_id);
 
- loadContacts();
- startRealtime();
+loadContacts();
+startRealtime();
 }
 
 function getSavedContacts(){
- try{
-  return JSON.parse(
-   localStorage.getItem("hj_contacts_"+currentUser.id)
-  ) || [];
- }catch(e){
-  return [];
- }
+try{
+return JSON.parse(
+localStorage.getItem("hj_contacts_"+currentUser.id)
+) || [];
+}catch(e){
+return [];
+}
 }
 
 function saveContacts(){
- localStorage.setItem(
-  "hj_contacts_"+currentUser.id,
-  JSON.stringify(contacts)
- );
+localStorage.setItem(
+"hj_contacts_"+currentUser.id,
+JSON.stringify(contacts)
+);
 }
 
 async function loadContacts(){
- contacts = getSavedContacts();
- renderContacts();
+contacts = getSavedContacts();
+renderContacts();
 }
 
 function renderContacts(){
- const box = $("contacts");
- box.innerHTML = "";
+const box = $("contacts");
+box.innerHTML = "";
 
- if(!contacts.length){
-  box.textContent = "No contacts added yet.";
-  return;
- }
+if(!contacts.length){
+box.textContent = "No contacts added yet.";
+return;
+}
 
- contacts.forEach(c=>{
-  const div = document.createElement("div");
-  div.className = "contact";
-  div.textContent = "💬 " + c.display_name +
-   " (" + c.user_id + ")";
+contacts.forEach(c=>{
+const div = document.createElement("div");
+div.className = "contact";
+div.textContent = "💬 " + c.display_name +
+" (" + c.user_id + ")";
 
-  div.onclick = ()=>openChat(c);
-  box.appendChild(div);
- });
+div.onclick = ()=>openChat(c);
+box.appendChild(div);
+});
 }
 
 async function addContact(){
- const id = $("contactId").value.trim().toUpperCase();
+const id = $("contactId").value.trim().toUpperCase();
 
- if(!id){
-  status("contactStatus","HASSAM ID likho.");
-  return;
- }
+if(!id){
+status("contactStatus","HASSAM ID likho.");
+return;
+}
 
- if(id === myProfile.user_id){
-  status("contactStatus","Apni ID add nahi kar sakte.");
-  return;
- }
+if(id === myProfile.user_id){
+status("contactStatus","Apni ID add nahi kar sakte.");
+return;
+}
 
- status("contactStatus","Contact search ho raha hai...");
+status("contactStatus","Contact search ho raha hai...");
 
- const {data,error} = await db
-  .from("profiles")
-  .select("id,user_id,display_name")
-  .eq("user_id",id)
-  .maybeSingle();
+const {data,error} = await db
+.from("profiles")
+.select("id,user_id,display_name")
+.eq("user_id",id)
+.maybeSingle();
 
- if(error){
-  status("contactStatus",error.message);
-  return;
- }
+if(error){
+status("contactStatus",error.message);
+return;
+}
 
- if(!data){
-  status("contactStatus","Ye HASSAM ID nahi mili.");
-  return;
- }
+if(!data){
+status("contactStatus","Ye HASSAM ID nahi mili.");
+return;
+}
 
- if(contacts.some(c=>c.id===data.id)){
-  status("contactStatus","Contact pehle se added hai.");
-  return;
- }
+if(contacts.some(c=>c.id===data.id)){
+status("contactStatus","Contact pehle se added hai.");
+return;
+}
 
- contacts.push(data);
- saveContacts();
- renderContacts();
+contacts.push(data);
+saveContacts();
+renderContacts();
 
- $("contactId").value = "";
- status("contactStatus","Contact successfully added!");
+$("contactId").value = "";
+status("contactStatus","Contact successfully added!");
 }
 
 async function openChat(contact){
- selectedContact = contact;
+selectedContact = contact;
 
- $("chatTitle").textContent =
- "Chat with " + contact.display_name;
+$("chatTitle").textContent =
+"Chat with " + contact.display_name;
 
- $("messageInput").disabled = false;
- $("sendBtn").disabled = false;
+$("messageInput").disabled = false;
+$("sendBtn").disabled = false;
 
- await loadMessages();
+await loadMessages();
 }
 
 async function loadMessages(){
- if(!selectedContact) return;
+if(!selectedContact) return;
 
- status("chatStatus","Messages load ho rahe hain...");
+status("chatStatus","Messages load ho rahe hain...");
 
- const a = currentUser.id;
- const b = selectedContact.id;
+const a = currentUser.id;
+const b = selectedContact.id;
 
- const {data,error} = await db
-  .from("messages")
-  .select("*")
-  .or(
-   `and(sender_id.eq.${a},receiver_id.eq.${b}),and(sender_id.eq.${b},receiver_id.eq.${a})`
-  )
-  .order("created_at",{ascending:true});
+const {data,error} = await db
+.from("messages")
+.select("*")
+.or(
+`and(sender_id.eq.${a},receiver_id.eq.${b}),and(sender_id.eq.${b},receiver_id.eq.${a})`
+)
+.order("created_at",{ascending:true});
 
- if(error){
-  status("chatStatus","Messages load nahi ho sake: "+error.message);
-  return;
- }
+if(error){
+status("chatStatus","Messages load nahi ho sake: "+error.message);
+return;
+}
 
- const box = $("chatBox");
- box.innerHTML = "";
+const box = $("chatBox");
+box.innerHTML = "";
 
- if(!data.length){
-  box.textContent = "Abhi koi message nahi. Pehla message bhejo!";
-  return;
- }
+if(!data.length){
+box.textContent = "Abhi koi message nahi. Pehla message bhejo!";
+return;
+}
 
- data.forEach(m=>showMessage(m));
+data.forEach(m=>showMessage(m));
 
- box.scrollTop = box.scrollHeight;
- status("chatStatus","");
+box.scrollTop = box.scrollHeight;
+status("chatStatus","");
 }
 
 function showMessage(m){
- const box = $("chatBox");
+const box = $("chatBox");
 
- const div = document.createElement("div");
- div.className = "msg";
+const div = document.createElement("div");
+div.className = "msg";
 
- if(m.sender_id === currentUser.id){
-  div.classList.add("mine");
- }
+if(m.sender_id === currentUser.id){
+div.classList.add("mine");
+}
 
- const text = document.createElement("div");
- text.textContent = m.content;
+const text = document.createElement("div");
+text.textContent = m.content;
 
- const time = document.createElement("div");
- time.className = "small";
- time.textContent = new Date(m.created_at).toLocaleString();
+const time = document.createElement("div");
+time.className = "small";
+time.textContent = new Date(m.created_at).toLocaleString();
 
- div.appendChild(text);
- div.appendChild(time);
- box.appendChild(div);
+div.appendChild(text);
+div.appendChild(time);
+box.appendChild(div);
 
- box.scrollTop = box.scrollHeight;
+box.scrollTop = box.scrollHeight;
 }
 
 async function sendMessage(){
- if(!selectedContact) return;
+if(!selectedContact) return;
 
- const content = $("messageInput").value.trim();
+const content = $("messageInput").value.trim();
 
- if(!content) return;
+if(!content) return;
 
- $("sendBtn").disabled = true;
+$("sendBtn").disabled = true;
 
- const {data,error} = await db
-  .from("messages")
-  .insert({
-   sender_id:currentUser.id,
-   receiver_id:selectedContact.id,
-   content:content
-  })
-  .select()
-  .single();
+const {data,error} = await db
+.from("messages")
+.insert({
+sender_id:currentUser.id,
+receiver_id:selectedContact.id,
+content:content
+})
+.select()
+.single();
 
- $("sendBtn").disabled = false;
+$("sendBtn").disabled = false;
 
- if(error){
-  status("chatStatus","Message send nahi hua: "+error.message);
-  return;
- }
+if(error){
+status("chatStatus","Message send nahi hua: "+error.message);
+return;
+}
 
- $("messageInput").value = "";
- showMessage(data);
- status("chatStatus","Message sent!");
+$("messageInput").value = "";
+showMessage(data);
+status("chatStatus","Message sent!");
 }
 
 function startRealtime(){
- if(realtimeChannel){
-  db.removeChannel(realtimeChannel);
- }
+if(realtimeChannel){
+db.removeChannel(realtimeChannel);
+}
 
- realtimeChannel = db
-  .channel("messages-"+currentUser.id)
-  .on(
-   "postgres_changes",
-   {
-    event:"INSERT",
-    schema:"public",
-    table:"messages"
-   },
-   payload=>{
-    const m = payload.new;
+realtimeChannel = db
+.channel("messages-"+currentUser.id)
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"messages"
+},
+payload=>{
+const m = payload.new;
 
-    if(!selectedContact) return;
+if(!selectedContact) return;
 
-    const belongs =
-     (m.sender_id===currentUser.id &&
-      m.receiver_id===selectedContact.id) ||
-     (m.sender_id===selectedContact.id &&
-      m.receiver_id===currentUser.id);
+const belongs =
+(m.sender_id===currentUser.id &&
+m.receiver_id===selectedContact.id) ||
+(m.sender_id===selectedContact.id &&
+m.receiver_id===currentUser.id);
 
-    if(belongs){
-     loadMessages();
-    }
-   }
-  )
-  .subscribe();
+if(belongs){
+loadMessages();
+}
+}
+)
+.subscribe();
 }
 
 async function logout(){
- if(realtimeChannel){
-  await db.removeChannel(realtimeChannel);
- }
+if(realtimeChannel){
+await db.removeChannel(realtimeChannel);
+}
 
- await db.auth.signOut();
- location.reload();
+await db.auth.signOut();
+location.reload();
 }
 
 $("messageInput").addEventListener("keydown",e=>{
- if(e.key==="Enter") sendMessage();
+if(e.key==="Enter") sendMessage();
 });
 
 let installPrompt = null;
 
 window.addEventListener("beforeinstallprompt",e=>{
- e.preventDefault();
- installPrompt = e;
- $("installBtn").classList.remove("hidden");
+e.preventDefault();
+installPrompt = e;
+$("installBtn").classList.remove("hidden");
 });
 
 async function installApp(){
- if(!installPrompt){
-  alert("Chrome menu se Install page as app try karo.");
-  return;
- }
+if(!installPrompt){
+alert("Chrome menu se Install page as app try karo.");
+return;
+}
 
- installPrompt.prompt();
- await installPrompt.userChoice;
- installPrompt = null;
- $("installBtn").classList.add("hidden");
+installPrompt.prompt();
+await installPrompt.userChoice;
+installPrompt = null;
+$("installBtn").classList.add("hidden");
 }
 
 if("serviceWorker" in navigator){
- navigator.serviceWorker.register("./sw.js")
-  .catch(err=>console.log("SW:",err));
+navigator.serviceWorker.register("./sw.js")
+.catch(err=>console.log("SW:",err));
 }
 
 db.auth.getSession().then(({data})=>{
- if(data.session) startApp();
+if(data.session) startApp();
 });
 </script>
 
